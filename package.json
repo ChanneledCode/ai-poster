@@ -7,9 +7,12 @@
     "dev": "nodemon --config nodemon.json"
   },
   "dependencies": {
+    "@notionhq/client": "^2.2.15",
+    "dotenv": "^16.4.5",
     "electron": "^32.1.0",
     "openai": "^4.56.0",
     "papaparse": "^5.4.1",
+    "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7"
   },
   "author": "",

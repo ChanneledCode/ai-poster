@@ -14,5 +14,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
     saveTemplates: (templates) => ipcRenderer.invoke('save-templates', templates),
     loadTemplatesByPromptId: (promptId) => ipcRenderer.invoke('load-templates-by-prompt-id', promptId),
     clearDatabase: () => ipcRenderer.invoke('clear-database'),
-    generatePost: (prompt, apiKey) => ipcRenderer.invoke('generate-post', prompt, apiKey)
+    generatePost: (prompt, apiKey) => ipcRenderer.invoke('generate-post', prompt, apiKey),
+    getPrompts: () => ipcRenderer.invoke('get-prompts'),
+    getTemplates: (promptId) => ipcRenderer.invoke('get-templates', promptId),
+    fetchNotionData: () => ipcRenderer.invoke('fetch-notion-data'),
+    syncNotionData: () => ipcRenderer.invoke('sync-notion-data'),
+    on: (channel, func) => ipcRenderer.on(channel, (event, ...args) => func(...args)),
 });

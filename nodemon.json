@@ -1,5 +1,5 @@
 {
-  "watch": ["main.mjs", "styles.css", "index.html"],
+  "watch": ["main.mjs", "styles.css", "index.html", "renderer.js", "notionSync.js", "preload.js"],
   "ext": "mjs,js,json,css,html",
   "exec": "electron ."
 }

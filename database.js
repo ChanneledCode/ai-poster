@@ -93,15 +93,11 @@ function saveTemplates(templates) {
 }
 
 function loadPrompts() {
-    return new Promise((resolve, reject) => {
-        db.all('SELECT * FROM prompts', (err, rows) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(rows);
-            }
+    return Prompt.findAll()
+        .then(prompts => prompts)
+        .catch(err => {
+            throw err;
         });
-    });
 }
 
 function loadTemplatesByPromptId(promptId) {

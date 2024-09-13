@@ -1,11 +1,13 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const prompts = await window.electronAPI.loadPrompts();
-        // console.log('Loaded prompts:', prompts); // Debug log
-        populatePromptSelect(prompts);
-    } catch (error) {
-        console.error('Error loading prompts:', error);
+document.addEventListener('DOMContentLoaded', () => {
+    // Load prompts from localStorage on initial page load
+    const storedPrompts = JSON.parse(localStorage.getItem('prompts') || '[]');
+    if (storedPrompts.length > 0) {
+        console.log('Stored prompts:', storedPrompts);
+        populatePromptSelect(storedPrompts);
     }
+
+    // This will now be handled by the 'prompts-loaded' event
+    // loadPrompts() is no longer needed here
 });
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -100,19 +102,20 @@ document.getElementById('templatesFile').addEventListener('change', async (event
 });
 
 document.getElementById('promptSelect').addEventListener('change', async (event) => {
-    const selectedPromptId = parseInt(event.target.value);
-    if (isNaN(selectedPromptId)) {
+    const selectedPromptId = event.target.value;
+    if (!selectedPromptId) {
         document.getElementById('selectedPrompt').innerText = '';
         document.getElementById('templateSelect').innerHTML = '<option value="">--Select a template--</option>';
         return;
     }
     const prompts = JSON.parse(localStorage.getItem('prompts')) || [];
-    const selectedPrompt = prompts.find(prompt => prompt.id === selectedPromptId);
+    const selectedPrompt = prompts.find(prompt => prompt.dataValues.id === selectedPromptId);
+    console.log('Selected prompt:', selectedPrompt);
     if (selectedPrompt) {
-        document.getElementById('selectedPrompt').dataset.originalPrompt = selectedPrompt.prompt;
-        updatePromptDisplay(selectedPrompt.prompt);
+        document.getElementById('selectedPrompt').dataset.originalPrompt = selectedPrompt.dataValues.promptContent; // Changed from prompt to description
+        updatePromptDisplay(selectedPrompt.dataValues.promptContent);
     }
-    const templates = await window.electronAPI.loadTemplatesByPromptId(selectedPromptId);
+    const templates = await window.electronAPI.getTemplates(selectedPromptId);
     populateTemplateSelect(templates);
 });
 
@@ -166,17 +169,39 @@ document.getElementById('clearDatabase').addEventListener('click', async () => {
     }
 });
 
+// This event listener will handle both initial load and updates
+window.electronAPI.on('prompts-loaded', (prompts) => {
+    console.log('Received prompts:', prompts); 
+    populatePromptSelect(prompts);
+});
+
+// Update the fetchNotionData event listener
+document.getElementById('fetchNotionData').addEventListener('click', async () => {
+    try {
+        await window.electronAPI.syncNotionData();
+        const prompts = await window.electronAPI.getPrompts();
+        console.log('Prompts:', prompts);
+        populatePromptSelect(prompts);
+        console.log('Notion data fetched and database updated');
+    } catch (error) {
+        console.error('Error fetching Notion data:', error);
+    }
+});
+
+// Update this function to handle both initial load and updates
 function populatePromptSelect(prompts) {
     const promptSelect = document.getElementById('promptSelect');
     promptSelect.innerHTML = '<option value="">--Select a prompt--</option>';
     prompts.forEach((prompt) => {
+        prompt = prompt.dataValues;
         const option = document.createElement('option');
         option.value = prompt.id;
-        option.text = prompt.label;
+        option.textContent = prompt.title;
         promptSelect.appendChild(option);
     });
+    // Store prompts in localStorage for later use
     localStorage.setItem('prompts', JSON.stringify(prompts));
-    // console.log('Populated prompt select:', promptSelect.innerHTML); // Debug log
+    console.log('Populated prompt select with', prompts.length, 'prompts');
 }
 
 function populateTemplateSelect(templates) {
@@ -184,8 +209,8 @@ function populateTemplateSelect(templates) {
     templateSelect.innerHTML = '<option value="">--Select a template--</option>';
     templates.forEach((template) => {
         const option = document.createElement('option');
-        option.value = template.template;
-        option.text = template.label; // Display the label instead of the template
+        option.value = template.content; // Changed from template.template to template.content
+        option.text = template.title; // Changed from template.label to template.title
         templateSelect.appendChild(option);
     });
     // console.log('Populated template select:', templateSelect.innerHTML); // Debug log
@@ -196,3 +221,21 @@ function updatePromptDisplay(prompt) {
     const formattedPrompt = prompt.replace(/\\n/g, '\n');
     document.getElementById('selectedPrompt').innerText = formattedPrompt;
 }
+
+// Function to populate the select element with prompts
+function populatePrompts(prompts) {
+    const promptSelect = document.getElementById('promptSelect');
+    promptSelect.innerHTML = '';
+    prompts.forEach(prompt => {
+        prompt = prompt.dataValues;
+        const option = document.createElement('option');
+        option.value = prompt.id;
+        option.textContent = prompt.title;
+        promptSelect.appendChild(option);
+    });
+}
+
+// Load prompts when the app starts
+window.electronAPI.on('prompts-loaded', (prompts) => {
+    populatePrompts(prompts);
+});
