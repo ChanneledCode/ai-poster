@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Post Generator</title>
+    <!-- Add Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Add Custom CSS -->
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">AI Post Generator</h1>
+        <div id="apiKeyAlert" class="alert alert-warning alert-dismissible fade show" role="alert" style="display: none;">
+            Please enter your OpenAI API Key.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">Upload Files</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="promptsFile">Upload Prompts CSV File:</label>
+                            <input type="file" id="promptsFile" accept=".csv" class="form-control-file">
+                        </div>
+                        <div class="form-group">
+                            <label for="templatesFile">Upload Templates CSV File:</label>
+                            <input type="file" id="templatesFile" accept=".csv" class="form-control-file">
+                        </div>
+                        <div id="apiKeySection" class="form-group">
+                            <label for="apiKey">OpenAI API Key:</label>
+                            <input type="text" id="apiKey" class="form-control" placeholder="Enter your OpenAI API Key">
+                            <button id="saveApiKey" class="btn btn-success mt-2">Save API Key</button>
+                        </div>
+                        <button id="removeApiKey" class="btn btn-danger" style="display: none;">Remove API Key</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">Select Options</div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="promptSelect">Select Prompt:</label>
+                            <select id="promptSelect" class="form-control">
+                                <option value="">--Select a prompt--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="templateSelect">Select Template:</label>
+                            <select id="templateSelect" class="form-control">
+                                <option value="">--Select a template--</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button id="generatePost" class="btn btn-primary" disabled>Generate Post</button>
+                    <button id="clearDatabase" class="btn btn-danger">Clear Database</button>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card resizable">
+                    <div class="card-header">Selected Prompt</div>
+                    <div class="card-body">
+                        <code id="selectedPrompt" contenteditable="true" class="form-control"></code>
+                    </div>
+                </div>
+                <div class="card resizable">
+                    <div class="card-header">User Input</div>
+                    <div class="card-body">
+                        <textarea id="userInput" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="card resizable">
+                    <div class="card-header">Generated Post</div>
+                    <div class="card-body">
+                        <p id="generatedPost" class="form-control"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="renderer.js"></script>
+    <!-- Add Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

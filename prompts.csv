@@ -1,0 +1,4 @@
+id,label,prompt
+1,"Write Thread","I will provide you a TWITTER TEMPLATE and an INPUT below.\nYour job is to write a new text by filling in the variables in the TWITTER TEMPLATE using the INPUT context.\nYou should aim to follow the TWITTER TEMPLATE, but you can make minor adaptations to the template if it makes sense for the context.\n\nThis is very important:\n-Every tweet must be less than 280 characters.\n-Refrain from puffery writing at all cost.\n-Avoid salesy words like "game-changing, unlock, master, skyrocket, revolutionize, etc".\n\n<TWITTER TEMPLATE>\n\n{template}\n\n</TWITTER TEMPLATE>\n\n<INPUT>\n\n{input}\n\n</INPUT>"
+2,"Farewell Prompt","Goodbye {input}, \nhope you liked your {template}."
+3,"Question Prompt","Can you tell \nme more about {input} and how it relates to {template}?"
